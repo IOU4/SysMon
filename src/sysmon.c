@@ -10,10 +10,8 @@ int main() {
   noecho();
   curs_set(0);
   border(0, 0, 0, 0, 0, 0, 0, 0);
-  // WINDOW *memory_win = newwin(10, 20, 5, 15);
-  // mvwprintw(memory_win, 8, 8, "%lo", get_total_memory());
   refresh();
-  memory();
+  print_memory();
   while (true) {
   }
 
