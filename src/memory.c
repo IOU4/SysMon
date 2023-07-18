@@ -9,38 +9,42 @@
 
 #define MAX_LENGTH 40
 
-struct rusage r_usage;
-
 void print_memory() {
-  WINDOW *memroy_win = newwin(10, 20, 5, 15);
-  getrusage(RUSAGE_SELF, &r_usage);
-  box(memroy_win, 0, 0);
-  mvwprintw(memroy_win, 1, 1, "memory");
-  mvwprintw(memroy_win, 3, 1, "total: %ld kbytes", parse_mem_info()[0]);
+  WINDOW *memroy_win = newwin(10, 40, 5, 5);
+  mvwprintw(memroy_win, 1, 1, " ------- ");
+  mvwprintw(memroy_win, 2, 1, "|MEMORY:|");
+  mvwprintw(memroy_win, 3, 1, " ------- ");
+  mvwprintw(memroy_win, 5, 1, "total: %.1f Mb", parse_mem_info()[0]);
+  mvwprintw(memroy_win, 6, 1, "free: %.1f Mb", parse_mem_info()[1]);
+  mvwprintw(memroy_win, 7, 1, "available: %.1f Mb", parse_mem_info()[2]);
   wrefresh(memroy_win);
 }
 
-unsigned long *parse_mem_info() {
+float *parse_mem_info() {
   FILE *mem_file = fopen("/proc/meminfo", "r");
   if (mem_file == NULL) {
     perror("couldn't open /proc/meminfo");
     exit(1);
   }
 
-  unsigned long *res = malloc(2 * sizeof(long));
+  float *res = malloc(2 * sizeof(unsigned long));
   char line[MAX_LENGTH];
 
   while (fgets(line, MAX_LENGTH, mem_file)) {
     int found = 0;
     if (strncmp("MemTotal:", line, 8) == 0) {
-      res[0] = get_value_from_line(line);
+      res[0] = kb_to_mb(get_value_from_line(line));
       found++;
     }
     if (strncmp("MemFree:", line, 8) == 0) {
-      res[1] = get_value_from_line(line);
+      res[1] = kb_to_mb(get_value_from_line(line));
       found++;
     }
-    if (found >= 2)
+    if (strncmp("MemAvailable:", line, 8) == 0) {
+      res[2] = kb_to_mb(get_value_from_line(line));
+      found++;
+    }
+    if (found >= 3)
       return res;
   }
   return res;
@@ -51,3 +55,5 @@ unsigned long get_value_from_line(char *line) {
   sscanf(line, "%*s %lu", &value);
   return value;
 }
+
+float kb_to_mb(unsigned long kb) { return (kb * 1.0) / 1024; }

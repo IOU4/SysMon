@@ -2,7 +2,8 @@
 #define MEMORY_H
 
 void print_memory();
-unsigned long *parse_mem_info();
+float *parse_mem_info();
 unsigned long get_value_from_line(char *);
+float kb_to_mb(unsigned long);
 
 #endif

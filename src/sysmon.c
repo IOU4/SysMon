@@ -14,7 +14,7 @@ int main() {
   print_memory();
   while (true) {
   }
-
+  getch();
   endwin();
   return 0;
 }
