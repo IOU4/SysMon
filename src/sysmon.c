@@ -12,8 +12,6 @@ int main() {
   border(0, 0, 0, 0, 0, 0, 0, 0);
   refresh();
   print_memory();
-  while (true) {
-  }
   getch();
   endwin();
   return 0;

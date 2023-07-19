@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
+#include <unistd.h>
 
 #include "memory.h"
 
@@ -14,10 +15,13 @@ void print_memory() {
   mvwprintw(memroy_win, 1, 1, " ------- ");
   mvwprintw(memroy_win, 2, 1, "|MEMORY:|");
   mvwprintw(memroy_win, 3, 1, " ------- ");
-  mvwprintw(memroy_win, 5, 1, "total: %.1f Mb", parse_mem_info()[0]);
-  mvwprintw(memroy_win, 6, 1, "free: %.1f Mb", parse_mem_info()[1]);
-  mvwprintw(memroy_win, 7, 1, "available: %.1f Mb", parse_mem_info()[2]);
-  wrefresh(memroy_win);
+  while (1) {
+    mvwprintw(memroy_win, 5, 1, "total: %.1f Mb", parse_mem_info()[0]);
+    mvwprintw(memroy_win, 6, 1, "free: %.1f Mb", parse_mem_info()[1]);
+    mvwprintw(memroy_win, 7, 1, "available: %.1f Mb", parse_mem_info()[2]);
+    wrefresh(memroy_win);
+    sleep(1);
+  }
 }
 
 float *parse_mem_info() {
@@ -47,6 +51,7 @@ float *parse_mem_info() {
     if (found >= 3)
       return res;
   }
+  fclose(mem_file);
   return res;
 }
 
