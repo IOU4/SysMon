@@ -37,15 +37,15 @@ float *parse_mem_info() {
   while (fgets(line, MAX_LENGTH, mem_file)) {
     int found = 0;
     if (strncmp("MemTotal:", line, 8) == 0) {
-      res[0] = kb_to_mb(get_value_from_line(line));
+      res[0] = kb_to_mb(get_value_from_memory_line(line));
       found++;
     }
-    if (strncmp("MemFree:", line, 8) == 0) {
-      res[1] = kb_to_mb(get_value_from_line(line));
+    if (strncmp("MemFree:", line, 7) == 0) {
+      res[1] = kb_to_mb(get_value_from_memory_line(line));
       found++;
     }
-    if (strncmp("MemAvailable:", line, 8) == 0) {
-      res[2] = kb_to_mb(get_value_from_line(line));
+    if (strncmp("MemAvailable:", line, 12) == 0) {
+      res[2] = kb_to_mb(get_value_from_memory_line(line));
       found++;
     }
     if (found >= 3)
@@ -55,7 +55,7 @@ float *parse_mem_info() {
   return res;
 }
 
-unsigned long get_value_from_line(char *line) {
+unsigned long get_value_from_memory_line(char *line) {
   unsigned long value;
   sscanf(line, "%*s %lu", &value);
   return value;
