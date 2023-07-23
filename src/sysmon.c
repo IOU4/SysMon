@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "cpu.h"
-// #include "memory.h"
+#include "memory.h"
 
 int main() {
 
@@ -12,6 +12,7 @@ int main() {
   curs_set(0);
   border(0, 0, 0, 0, 0, 0, 0, 0);
   refresh();
+  // print_memory();
   print_cpu();
   getch();
   endwin();

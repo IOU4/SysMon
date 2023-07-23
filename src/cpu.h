@@ -1,6 +1,10 @@
 #ifndef CPU_H
 #define CPU_H
 
+#define MAX_LINE_LENGTH 255
+#define WIN_WIDTH 34
+#define WIN_HEIGHT 5
+
 #include <stdio.h>
 struct cpustat {
   unsigned long user;

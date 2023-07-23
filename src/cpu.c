@@ -6,18 +6,14 @@
 
 #include "cpu.h"
 
-#define MAX_LINE_LENGTH 40
-#define WIN_WIDTH 34
-#define WIN_HEIGHT 5
-
 void print_cpu() {
-  WINDOW *cpu_win = newwin(WIN_HEIGHT, WIN_WIDTH, 5, 1);
+  WINDOW *cpu_win = newwin(WIN_HEIGHT, WIN_WIDTH, 2, 1);
   box(cpu_win, 0, 0);
   mvwprintw(cpu_win, 0, 2, "CPU:");
   while (1) {
     float total_usage = calculate_usage();
-    mvwprintw(cpu_win, 2, 1, "overall usage: %.4f %%", total_usage);
-    mvwprintw(cpu_win, 3, 1, "overall free: %.4f %%", 100 - total_usage);
+    mvwprintw(cpu_win, 1, 1, "overall usage: %.4f %%", total_usage);
+    mvwprintw(cpu_win, 2, 1, "overall free: %.4f %%", 100 - total_usage);
     wrefresh(cpu_win);
   }
 }
