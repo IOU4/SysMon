@@ -1,3 +1,4 @@
+#include <curses.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,13 +7,17 @@
 #include "cpu.h"
 
 #define MAX_LINE_LENGTH 40
+#define WIN_WIDTH 34
+#define WIN_HEIGHT 5
 
 void print_cpu() {
-  WINDOW *cpu_win = newwin(10, 40, 5, 5);
-  mvwprintw(cpu_win, 2, 1, "CPU:");
+  WINDOW *cpu_win = newwin(WIN_HEIGHT, WIN_WIDTH, 5, 1);
+  box(cpu_win, 0, 0);
+  mvwprintw(cpu_win, 0, 2, "CPU:");
   while (1) {
-    mvwprintw(cpu_win, 5, 1, "overall usage: %.4f %%", calculate_usage());
-    // mvwprintw(cpu_win, 6, 1, "overall free: %.1f ", parse_cpu_info()[1]);
+    float total_usage = calculate_usage();
+    mvwprintw(cpu_win, 2, 1, "overall usage: %.4f %%", total_usage);
+    mvwprintw(cpu_win, 3, 1, "overall free: %.4f %%", 100 - total_usage);
     wrefresh(cpu_win);
   }
 }
