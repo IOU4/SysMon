@@ -3,22 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/resource.h>
 #include <unistd.h>
 
 #include "memory.h"
 
-#define MAX_LENGTH 40
-
 void print_memory() {
-  WINDOW *memroy_win = newwin(10, 40, 5, 5);
-  mvwprintw(memroy_win, 1, 1, " ------- ");
-  mvwprintw(memroy_win, 2, 1, "|MEMORY:|");
-  mvwprintw(memroy_win, 3, 1, " ------- ");
+  WINDOW *memroy_win = newwin(WIN_HEIGHT, WIN_WIDTH, 10, 1);
+  box(memroy_win, 0, 0);
+  mvwprintw(memroy_win, 0, 2, "MEMORY:");
   while (1) {
-    mvwprintw(memroy_win, 5, 1, "total: %.1f Mb", parse_mem_info()[0]);
-    mvwprintw(memroy_win, 6, 1, "free: %.1f Mb", parse_mem_info()[1]);
-    mvwprintw(memroy_win, 7, 1, "available: %.1f Mb", parse_mem_info()[2]);
+    mvwprintw(memroy_win, 1, 1, "total: %.1f Mb", parse_mem_info()[0]);
+    mvwprintw(memroy_win, 2, 1, "free: %.1f Mb", parse_mem_info()[1]);
+    mvwprintw(memroy_win, 3, 1, "available: %.1f Mb", parse_mem_info()[2]);
     wrefresh(memroy_win);
     sleep(1);
   }
@@ -32,9 +28,9 @@ float *parse_mem_info() {
   }
 
   float *res = malloc(2 * sizeof(unsigned long));
-  char line[MAX_LENGTH];
+  char line[MAX_LINE_LENGTH];
 
-  while (fgets(line, MAX_LENGTH, mem_file)) {
+  while (fgets(line, MAX_LINE_LENGTH, mem_file)) {
     int found = 0;
     if (strncmp("MemTotal:", line, 8) == 0) {
       res[0] = kb_to_mb(get_value_from_memory_line(line));
