@@ -3,21 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "memory.h"
 
 void print_memory() {
-  WINDOW *memroy_win = newwin(WIN_HEIGHT, WIN_WIDTH, 10, 1);
+  WINDOW *memroy_win = newwin(WIN_HEIGHT, WIN_WIDTH, 7, 1);
   box(memroy_win, 0, 0);
   mvwprintw(memroy_win, 0, 2, "MEMORY:");
-  while (1) {
-    mvwprintw(memroy_win, 1, 1, "total: %.1f Mb", parse_mem_info()[0]);
-    mvwprintw(memroy_win, 2, 1, "free: %.1f Mb", parse_mem_info()[1]);
-    mvwprintw(memroy_win, 3, 1, "available: %.1f Mb", parse_mem_info()[2]);
-    wrefresh(memroy_win);
-    sleep(1);
-  }
+  mvwprintw(memroy_win, 1, 1, "total: %.1f Mb", parse_mem_info()[0]);
+  mvwprintw(memroy_win, 2, 1, "free: %.1f Mb", parse_mem_info()[1]);
+  mvwprintw(memroy_win, 3, 1, "available: %.1f Mb", parse_mem_info()[2]);
+  wrefresh(memroy_win);
 }
 
 float *parse_mem_info() {

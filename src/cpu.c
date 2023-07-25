@@ -10,12 +10,10 @@ void print_cpu() {
   WINDOW *cpu_win = newwin(WIN_HEIGHT, WIN_WIDTH, 2, 1);
   box(cpu_win, 0, 0);
   mvwprintw(cpu_win, 0, 2, "CPU:");
-  while (1) {
-    float total_usage = calculate_usage();
-    mvwprintw(cpu_win, 1, 1, "overall usage: %.4f %%", total_usage);
-    mvwprintw(cpu_win, 2, 1, "overall free: %.4f %%", 100 - total_usage);
-    wrefresh(cpu_win);
-  }
+  float total_usage = calculate_usage();
+  mvwprintw(cpu_win, 1, 1, "overall usage: %.4f %%", total_usage);
+  mvwprintw(cpu_win, 2, 1, "overall free: %.4f %%", 100 - total_usage);
+  wrefresh(cpu_win);
 }
 
 void read_stats(cpu_stat *stats) {
@@ -35,7 +33,7 @@ float calculate_usage() {
   cpu_stat start_stat, end_stat;
 
   read_stats(&start_stat);
-  sleep(1);
+  usleep(500000);
   read_stats(&end_stat);
 
   // Calculate the difference in CPU usage

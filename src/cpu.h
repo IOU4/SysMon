@@ -3,7 +3,7 @@
 
 #define MAX_LINE_LENGTH 255
 #define WIN_WIDTH 34
-#define WIN_HEIGHT 5
+#define WIN_HEIGHT 4
 
 #include <stdio.h>
 struct cpustat {
