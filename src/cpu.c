@@ -7,7 +7,7 @@
 #include "cpu.h"
 
 void print_cpu() {
-  WINDOW *cpu_win = newwin(WIN_HEIGHT, WIN_WIDTH, 2, 1);
+  WINDOW *cpu_win = newwin(CPU_WIN_HEIGHT, CPU_WIN_WIDTH, 2, 1);
   box(cpu_win, 0, 0);
   mvwprintw(cpu_win, 0, 2, "CPU:");
   float total_usage = calculate_usage();
@@ -18,9 +18,9 @@ void print_cpu() {
 
 void read_stats(cpu_stat *stats) {
   FILE *stat_file = fopen("/proc/stat", "r");
-  char line[MAX_LINE_LENGTH];
+  char line[CPU_MAX_LINE_LENGTH];
 
-  while (fgets(line, MAX_LINE_LENGTH, stat_file)) {
+  while (fgets(line, CPU_MAX_LINE_LENGTH, stat_file)) {
     if (sscanf(line, "cpu %lu %lu %lu %lu %lu %lu %lu", &(stats->user),
                &(stats->nice), &(stats->sys), &(stats->idle), &(stats->iowait),
                &(stats->irq), &(stats->softirq)))

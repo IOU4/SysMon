@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "cpu.h"
+#include "disk.h"
 #include "memory.h"
 
 int main() {
@@ -13,8 +14,9 @@ int main() {
   curs_set(0);
   refresh();
   while (1) {
-    print_memory();
-    print_cpu();
+    // print_memory();
+    // print_cpu();
+    print_disk();
     sleep(1);
   }
   getch();

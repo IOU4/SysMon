@@ -1,9 +1,9 @@
 #ifndef CPU_H
 #define CPU_H
 
-#define MAX_LINE_LENGTH 255
-#define WIN_WIDTH 34
-#define WIN_HEIGHT 4
+#define CPU_MAX_LINE_LENGTH 255
+#define CPU_WIN_WIDTH 34
+#define CPU_WIN_HEIGHT 4
 
 #include <stdio.h>
 struct cpustat {
