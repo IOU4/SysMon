@@ -1,16 +1,23 @@
 #include <curses.h>
 #include <ncurses.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include "cpu.h"
 
-void print_cpu() {
+void print_cpu(bool *is_first_run) {
   WINDOW *cpu_win = newwin(CPU_WIN_HEIGHT, CPU_WIN_WIDTH, 2, 1);
   box(cpu_win, 0, 0);
   mvwprintw(cpu_win, 0, 2, "CPU:");
-  float total_usage = calculate_usage();
+
+  float total_usage;
+  if (*is_first_run) {
+    total_usage = 0.0;
+    *is_first_run = false;
+  } else
+    total_usage = calculate_usage();
   mvwprintw(cpu_win, 1, 1, "overall usage: %.4f %%", total_usage);
   mvwprintw(cpu_win, 2, 1, "overall free: %.4f %%", 100 - total_usage);
   wrefresh(cpu_win);
