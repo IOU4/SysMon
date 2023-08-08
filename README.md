@@ -31,7 +31,7 @@
 ## Build instructions
 
 ### Prerequisite
-List of build-time dependencies:
+List of build/run-time dependencies:
   * `clang`
   * `make`
   * `ncurses`
