@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -lncurses 
+CFLAGS = -lncurses  -pthread
 
 all: memory.o cpu.o sysmon.o disk.o procs.o
 	$(CC) $(CFLAGS) -o sysmon obj/memory.o obj/cpu.o obj/sysmon.o obj/disk.o obj/procs.o
