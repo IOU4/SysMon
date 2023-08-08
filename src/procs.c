@@ -2,26 +2,53 @@
 #include <ctype.h>
 #include <curses.h>
 #include <dirent.h>
+#include <pthread.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 void print_procs() {
-  WINDOW *procs_win = newwin(LINES - 2, COLS - 2, 2, 1);
   int pids_count;
   uint *pids = get_running_pids(&pids_count);
-  box(procs_win, 0, 0);
-  mvwprintw(procs_win, 1, 1, "pid");
-  mvwprintw(procs_win, 1, 12, "cpu");
-  mvwprintw(procs_win, 1, 24, "memory");
-  for (int i = 0; i < pids_count; i++) {
-    Process proccess = get_proccess_info(pids[i]);
-    mvwprintw(procs_win, i + 3, 1, "%d", proccess.pid);
-    mvwprintw(procs_win, i + 3, 12, "%.4f %%", proccess.cpu_usage);
-    mvwprintw(procs_win, i + 3, 24, "%.4f Mb ", proccess.memory_usage);
+  WINDOW *procs_win = newwin(pids_count + 2, COLS - 2, 5, 1);
+  scrollok(procs_win, true);
+  mvprintw(3, 1, "pid");
+  mvprintw(3, 12, "cpu");
+  mvprintw(3, 24, "memory");
+  pthread_t read_key_thread;
+  Thread_data data;
+  data.procs_win = procs_win;
+  data.current_row = 0;
+  pthread_create(&read_key_thread, NULL, scroll_window, &data);
+  while (1) {
+    pids = get_running_pids(&pids_count);
+    for (int i = 0; i < pids_count; i++) {
+      Process proccess = get_proccess_info(pids[i]);
+      mvwprintw(procs_win, i + 1, 1, "%d", proccess.pid);
+      mvwprintw(procs_win, i + 1, 12, "%.4f %%", proccess.cpu_usage);
+      mvwprintw(procs_win, i + 1, 24, "%.4f Mb", proccess.memory_usage);
+    }
+    for (int k = data.current_row; k > 0; k--)
+      scroll(procs_win);
+    wrefresh(procs_win);
+    napms(5000);
   }
-  wrefresh(procs_win);
+}
+
+void *scroll_window(void *arg) {
+  Thread_data *data = (Thread_data *)arg;
+  int ch;
+  while ((ch = getch()) != 'q') {
+    if (ch == KEY_DOWN) {
+      (data->current_row)++;
+      scroll(data->procs_win);
+    }
+    wrefresh(data->procs_win);
+    napms(100);
+  }
+  return NULL;
 }
 
 uint *get_running_pids(int *pids_count) {
