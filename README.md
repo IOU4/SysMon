@@ -63,6 +63,8 @@ To compile and run Sysmon
 ~~~ shell
 make && ./sysmon
 ~~~
+> Pleas consider using wide enough Terminal screen for good output.
+
 
 ## License
 
