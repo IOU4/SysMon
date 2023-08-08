@@ -2,7 +2,7 @@
 #define CPU_H
 
 #define CPU_MAX_LINE_LENGTH 255
-#define CPU_WIN_WIDTH COLS - 2
+#define CPU_WIN_WIDTH (COLS - 4) / 2
 #define CPU_WIN_HEIGHT 4
 
 #include <stdio.h>

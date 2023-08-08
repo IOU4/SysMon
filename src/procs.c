@@ -9,14 +9,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void print_procs() {
+void *print_procs(void *args) {
   int pids_count;
   uint *pids = get_running_pids(&pids_count);
-  WINDOW *procs_win = newwin(pids_count + 2, COLS - 2, 5, 1);
+  WINDOW *procs_win =
+      newwin(pids_count + 2, PROCS_WIN_WIDTH, 3, PROCS_WIN_WIDTH);
   scrollok(procs_win, true);
-  mvprintw(3, 1, "pid");
-  mvprintw(3, 12, "cpu");
-  mvprintw(3, 24, "memory");
+  mvprintw(2, PROCS_WIN_WIDTH + 1, "pid");
+  mvprintw(2, PROCS_WIN_WIDTH + 12, "cpu");
+  mvprintw(2, PROCS_WIN_WIDTH + 24, "memory");
   pthread_t read_key_thread;
   Thread_data data;
   data.procs_win = procs_win;
@@ -26,15 +27,16 @@ void print_procs() {
     pids = get_running_pids(&pids_count);
     for (int i = 0; i < pids_count; i++) {
       Process proccess = get_proccess_info(pids[i]);
-      mvwprintw(procs_win, i + 1, 1, "%d", proccess.pid);
-      mvwprintw(procs_win, i + 1, 12, "%.4f %%", proccess.cpu_usage);
-      mvwprintw(procs_win, i + 1, 24, "%.4f Mb", proccess.memory_usage);
+      mvwprintw(procs_win, i, 1, "%d", proccess.pid);
+      mvwprintw(procs_win, i, 12, "%.4f %%", proccess.cpu_usage);
+      mvwprintw(procs_win, i, 24, "%.4f Mb", proccess.memory_usage);
     }
     for (int k = data.current_row; k > 0; k--)
       scroll(procs_win);
     wrefresh(procs_win);
     napms(5000);
   }
+  return NULL;
 }
 
 void *scroll_window(void *arg) {

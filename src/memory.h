@@ -2,7 +2,7 @@
 #define MEMORY_H
 
 #define MAX_LINE_LENGTH 255
-#define WIN_WIDTH COLS - 2
+#define WIN_WIDTH (COLS - 4) / 2
 #define WIN_HEIGHT 5
 
 void print_memory();

@@ -1,7 +1,7 @@
 #ifndef DISK_H
 #define DISK_H
 #define DISK_MAX_LINE_LENGTH 255
-#define DISK_WIN_WIDTH COLS - 2
+#define DISK_WIN_WIDTH (COLS - 4) / 2
 #define DISK_WIN_HEIGHT 10
 #define MAX_DISK_NAME_LEN 25
 #define MAX_DISK_PARTIONS 25

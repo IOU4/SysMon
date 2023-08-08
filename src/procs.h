@@ -4,7 +4,7 @@
 #include <curses.h>
 #include <sys/types.h>
 #define MAX_LINE_LENGTH 255
-#define PROCS_WIN_WIDTH COLS - 2
+#define PROCS_WIN_WIDTH (COLS - 2) / 2
 #define WIN_HEIGHT 5
 
 typedef struct procces_info {
@@ -18,7 +18,7 @@ typedef struct thread_data {
   WINDOW *procs_win;
 } Thread_data;
 
-void print_procs();
+void *print_procs(void *);
 uint *get_running_pids(int *pids_counts);
 Process get_proccess_info(uint pid);
 float get_uptime_ticks();
