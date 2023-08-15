@@ -9,32 +9,34 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+uint *pids;
+int procs_count;
+Process *procs;
+
 void *print_procs(void *args) {
-  int pids_count;
-  uint *pids = get_running_pids(&pids_count);
+  get_running_pids();
   WINDOW *procs_win =
-      newwin(pids_count + 2, PROCS_WIN_WIDTH, 3, PROCS_WIN_WIDTH);
+      newwin(procs_count + 2, PROCS_WIN_WIDTH, 3, PROCS_WIN_WIDTH);
   scrollok(procs_win, true);
-  mvprintw(2, PROCS_WIN_WIDTH + 1, "pid");
-  mvprintw(2, PROCS_WIN_WIDTH + 12, "cpu");
-  mvprintw(2, PROCS_WIN_WIDTH + 24, "memory");
+  print_window_info(procs_win);
   pthread_t read_key_thread;
   Thread_data data;
   data.procs_win = procs_win;
   data.current_row = 0;
   pthread_create(&read_key_thread, NULL, scroll_window, &data);
   while (1) {
-    pids = get_running_pids(&pids_count);
-    for (int i = 0; i < pids_count; i++) {
-      Process proccess = get_proccess_info(pids[i]);
-      mvwprintw(procs_win, i, 1, "%d", proccess.pid);
-      mvwprintw(procs_win, i, 12, "%.4f %%", proccess.cpu_usage);
-      mvwprintw(procs_win, i, 24, "%.4f Mb", proccess.memory_usage);
-    }
+    print_window_info(procs_win);
+    pids = get_running_pids();
+    procs = malloc(procs_count * sizeof(Process));
+    for (int i = 0; i < procs_count; i++)
+      procs[i] = get_proccess_info(pids[i]);
+    wclear(procs_win);
+    show_procs(procs_win);
     for (int k = data.current_row; k > 0; k--)
       scroll(procs_win);
     wrefresh(procs_win);
     napms(5000);
+    free(procs);
   }
   return NULL;
 }
@@ -43,29 +45,35 @@ void *scroll_window(void *arg) {
   Thread_data *data = (Thread_data *)arg;
   int ch;
   while ((ch = getch()) != 'q') {
-    if (ch == KEY_DOWN) {
+    if (ch == KEY_DOWN && data->current_row < procs_count) {
       (data->current_row)++;
-      scroll(data->procs_win);
+      wscrl(data->procs_win, 1);
+    } else if (ch == KEY_UP && (data->current_row) > 0) {
+      (data->current_row)--;
+      wclear(data->procs_win);
+      show_procs(data->procs_win);
+      for (int i = 0; i < data->current_row; i++)
+        scroll(data->procs_win);
     }
     wrefresh(data->procs_win);
-    napms(100);
+    napms(1);
   }
   return NULL;
 }
 
-uint *get_running_pids(int *pids_count) {
+uint *get_running_pids() {
   DIR *dir;
   struct dirent *entry;
   uint static pids[1000];
-  *pids_count = 0;
+  procs_count = 0;
   if ((dir = opendir("/proc")) == NULL) {
     perror("Failed to open /proc");
     return 0;
   }
   while ((entry = readdir(dir))) {
     if (entry->d_type == DT_DIR && isdigit(entry->d_name[0])) {
-      pids[*pids_count] = atoi(entry->d_name);
-      (*pids_count)++;
+      pids[procs_count] = atoi(entry->d_name);
+      procs_count++;
     }
   }
   closedir(dir);
@@ -83,7 +91,6 @@ Process get_proccess_info(uint pid) {
     char erorr_msg[255];
     sprintf(erorr_msg, "couldn't read %s", path_to_stats);
     perror(erorr_msg);
-    exit(1);
   }
 
   if (fgets(line, 255, stats_file) != NULL) {
@@ -113,4 +120,23 @@ float get_uptime_ticks() {
   fscanf(uptime_file, "%f", &uptime);
   fclose(uptime_file);
   return uptime;
+}
+
+void show_procs(WINDOW *procs_win) {
+  for (int i = 0; i < procs_count; i++) {
+    procs[i] = get_proccess_info(pids[i]);
+    mvwprintw(procs_win, i, 1, "%d", procs[i].pid);
+    mvwprintw(procs_win, i, 12, "%.4f %%", procs[i].cpu_usage);
+    mvwprintw(procs_win, i, 24, "%.4f Mb", procs[i].memory_usage);
+  }
+}
+
+void print_window_info(WINDOW *procs_win) {
+  box(procs_win, 0, 0);
+  mvprintw(1, PROCS_WIN_WIDTH, "Processes:");
+  mvprintw(1, PROCS_WIN_WIDTH + 12, "total: %d", procs_count);
+  mvprintw(1, PROCS_WIN_WIDTH + 24, "_use arrow keys to scroll_");
+  mvprintw(2, PROCS_WIN_WIDTH + 1, "PID:");
+  mvprintw(2, PROCS_WIN_WIDTH + 12, "CPU:");
+  mvprintw(2, PROCS_WIN_WIDTH + 24, "MEMORY:");
 }
