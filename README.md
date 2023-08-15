@@ -68,6 +68,9 @@ make && ./sysmon
 > Sysmon outputs some weird cacharters from time to time, please go easy while scrolling 😅.
 
 
+## Screenshot
+![sysmon_screenshot](./assets/sysmon_screenshot.png?raw=true)
+
 ## License
 
 GNU General Public License, version 2 (GPL-2.0) or, at your option, any later version.
