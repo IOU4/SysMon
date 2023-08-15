@@ -65,6 +65,8 @@ make && ./sysmon
 ~~~
 > Pleas consider using wide enough Terminal screen for good output.
 
+> Sysmon outputs some weird cacharters from time to time, please go easy while scrolling 😅.
+
 
 ## License
 
